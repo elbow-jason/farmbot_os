@@ -2,6 +2,7 @@ defmodule FarmbotCore.FarmwareRuntime do
   @moduledoc """
   Handles execution of Farmware plugins.
   """
+  alias Avrdude.MuonTrapAdapter
 
   alias FarmbotCeleryScript.AST
   alias FarmbotCore.FarmwareRuntime.PipeWorker
@@ -110,7 +111,9 @@ defmodule FarmbotCore.FarmwareRuntime do
 
     # Start the plugin.
     Logger.debug "spawning farmware: #{exec} #{manifest.args}"
-    {cmd, _} = spawn_monitor(MuonTrap, :cmd, ["sh", ["-c", "#{exec} #{manifest.args}"], opts])
+    #TODO: Change MFA apply here to use a anonymous function.
+    # Caveat: format the ` "#{exec} #{manifest.args}"` before passing it to the closure.
+    {cmd, _} = spawn_monitor(MuonTrapAdapter, :cmd, ["sh", ["-c", "#{exec} #{manifest.args}"], opts])
 
     state = %State{
       caller: caller,
